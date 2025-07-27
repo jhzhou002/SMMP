@@ -24,10 +24,11 @@ export class ProjectController {
     try {
       const { error, value } = projectSchema.validate(req.body)
       if (error) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           message: error.details[0].message
         })
+        return
       }
 
       const { name, description, projectType, requirements } = value
@@ -83,10 +84,11 @@ export class ProjectController {
       const project = await this.projectService.getById(id)
       
       if (!project) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           message: '项目不存在'
         })
+        return
       }
 
       res.json({
@@ -108,10 +110,11 @@ export class ProjectController {
       const project = await this.projectService.getById(id)
       
       if (!project) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           message: '项目不存在'
         })
+        return
       }
 
       const agentStatus = await this.agentOrchestrator.getStatus(id)
