@@ -20,7 +20,7 @@ export class ProjectController {
     this.agentOrchestrator = new AgentOrchestrator()
   }
 
-  async createProject(req: Request, res: Response) {
+  async createProject(req: Request, res: Response): Promise<void> {
     try {
       const { error, value } = projectSchema.validate(req.body)
       if (error) {
@@ -61,7 +61,7 @@ export class ProjectController {
     }
   }
 
-  async getProjects(req: Request, res: Response) {
+  async getProjects(req: Request, res: Response): Promise<void> {
     try {
       const projects = await this.projectService.getAll()
       res.json({
@@ -77,7 +77,7 @@ export class ProjectController {
     }
   }
 
-  async getProject(req: Request, res: Response) {
+  async getProject(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params
       const project = await this.projectService.getById(id)
@@ -102,7 +102,7 @@ export class ProjectController {
     }
   }
 
-  async getProjectStatus(req: Request, res: Response) {
+  async getProjectStatus(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params
       const project = await this.projectService.getById(id)
@@ -132,7 +132,7 @@ export class ProjectController {
     }
   }
 
-  async getProjectFiles(req: Request, res: Response) {
+  async getProjectFiles(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params
       const files = await this.projectService.getFiles(id)
