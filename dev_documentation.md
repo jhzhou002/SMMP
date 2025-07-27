@@ -1,4 +1,4 @@
-# 多智能体AI软件开发平台 - 开发文档
+# 多智能体AI软件开发平台(SMMP:Smart Multi-Model Platform) - 开发文档
 
 ## 项目概述
 
