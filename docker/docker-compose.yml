@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: ai-devteam-postgres
+    environment:
+      POSTGRES_DB: ai_devteam
+      POSTGRES_USER: ai_devteam_user
+      POSTGRES_PASSWORD: ai_devteam_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - ai-devteam-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-devteam-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-devteam-network
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: ai-devteam-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ai_devteam
+      DB_USER: ai_devteam_user
+      DB_PASS: ai_devteam_pass
+      REDIS_URL: redis://redis:6379
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ../agents:/app/agents:ro
+    networks:
+      - ai-devteam-network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    container_name: ai-devteam-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - ai-devteam-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  ai-devteam-network:
+    driver: bridge

@@ -1,0 +1,35 @@
+FROM node:18-alpine
+
+# 安装Python和pip（用于agents）
+RUN apk add --no-cache python3 py3-pip
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制package.json和安装依赖
+COPY backend/package*.json ./
+RUN npm ci --only=production
+
+# 复制Python agents依赖
+COPY agents/requirements.txt ./agents/
+RUN cd agents && pip3 install -r requirements.txt
+
+# 复制应用代码
+COPY backend/ ./
+COPY agents/ ./agents/
+
+# 构建TypeScript
+RUN npm run build
+
+# 创建日志目录
+RUN mkdir -p logs
+
+# 设置权限
+RUN chown -R node:node /app
+USER node
+
+# 暴露端口
+EXPOSE 3001
+
+# 启动命令
+CMD ["npm", "start"]
